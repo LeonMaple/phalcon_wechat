@@ -1,0 +1,40 @@
+GET参数为：
+array (
+  '_url' => '/wechat/server/index',
+  'signature' => 'b9140cf717949fd7cc3d86bf4ae4e2812071a78a',
+  'timestamp' => '1426836929',
+  'nonce' => '1651660607',
+)
+
+GET参数为：
+array (
+  '_url' => '/wechat/server/index',
+  'signature' => 'b9140cf717949fd7cc3d86bf4ae4e2812071a78a',
+  'timestamp' => '1426836929',
+  'nonce' => '1651660607',
+)
+
+GET参数为：
+array (
+  '_url' => '/wechat/server/index',
+  'signature' => '117270ddc7f8d6e383e25715d4a3da542f3c358a',
+  'timestamp' => '1426838645',
+  'nonce' => '1372955986',
+)
+
+GET参数为：
+array (
+  '_url' => '/wechat/server/index',
+  'signature' => '6e69c4a5f09c4de0299f3d37afcecffcdcc0e359',
+  'timestamp' => '1426838658',
+  'nonce' => '535511383',
+)
+
+GET参数为：
+array (
+  '_url' => '/wechat/server/index',
+  'signature' => '61a801d4e12403e5f3d9f469f49277f8f6936980',
+  'timestamp' => '1426838666',
+  'nonce' => '255215901',
+)
+
