@@ -4,9 +4,9 @@ return new \Phalcon\Config(array(
     'database' => array(
         'adapter'  => 'Mysql',
         'host'     => 'localhost',
-        'username' => 'root',
-        'password' => 'helinfeng',
-        'dbname'   => 'phalcon',
+        'username' => 'xx',
+        'password' => 'xx',
+        'dbname'   => 'xx',
         'charset'  => 'utf8',
     ),
     'application' => array(
@@ -16,10 +16,10 @@ return new \Phalcon\Config(array(
         'baseUri' => '/wechat2/'
     ),
 //    'default' => array(
-//        'token'          => 'weixin',
-//        'encodingaeskey' => '7KwhE0lujwKp6QlqFa8MAjicMJwMbandxwV4FByJOEu',
-//        'appid'          => 'wxdeed10a72a696a11',
-//        'appsecret'      => '958fb87facfd51760457fb66a08feaae',
+//        'token'          => 'xx',
+//        'encodingaeskey' => 'xx',
+//        'appid'          => 'xx',
+//        'appsecret'      => 'xx',
 //        'debug'          => false,
 //        'logcallback'    => false,
 //    )
