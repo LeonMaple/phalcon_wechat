@@ -15,7 +15,7 @@ class WechatController
 {
 
     /**
-     *	微信公众平台PHP-SDK, 官方API部分
+     *	微信公众平台PHP-SDK, 官方API
      *  @author  dodge <dodgepudding@gmail.com>
      *  @link https://github.com/dodgepudding/wechat-php-sdk
      *  @version 1.2
@@ -1164,7 +1164,7 @@ class WechatController
      * @param string $appsecret 如在类初始化时已提供，则可为空
      * @param string $token 手动指定access_token，非必要情况不建议用
      */
-    public function checkAuth($appid='wxdeed10a72a696a11',$appsecret='958fb87facfd51760457fb66a08feaae',$token=''){
+    public function checkAuth($appid='',$appsecret='',$token=''){
         if (!$appid || !$appsecret) {
             $appid = $this->appid;
             $appsecret = $this->appsecret;
