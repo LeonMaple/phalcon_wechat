@@ -158,7 +158,9 @@ class ServerController extends \Phalcon\Mvc\Controller
 
     public function meunAction(WechatController $weObj)
     {
-
+        $weObj->getMenu();
+        $newmenu =  array ();
+        $weObj->createMenu($newmenu);
     }
 
 }
