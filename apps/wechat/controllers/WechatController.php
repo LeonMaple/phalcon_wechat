@@ -8,54 +8,19 @@
 
 namespace Wechat2\Wechat\Controllers;
 use Phalcon\Mvc\Controller;
+
 /**
  * @RoutePrefix("/wechat/wechat")
  */
 class WechatController
 {
 
-    /**
-     *	微信公众平台PHP-SDK, 官方API
-     *  @author  dodge <dodgepudding@gmail.com>
-     *  @link https://github.com/dodgepudding/wechat-php-sdk
-     *  @version 1.2
-     *  usage:
-     *   $options = array(
-     *			'token'=>'tokenaccesskey', //填写你设定的key
-     *			'encodingaeskey'=>'encodingaeskey', //填写加密用的EncodingAESKey
-     *			'appid'=>'wxdk1234567890', //填写高级调用功能的app id
-     *			'appsecret'=>'xxxxxxxxxxxxxxxxxxx' //填写高级调用功能的密钥
-     *		);
-     *	 $weObj = new Wechat($options);
-     *   $weObj->valid();
-     *   $type = $weObj->getRev()->getRevType();
-     *   switch($type) {
-     *   		case Wechat::MSGTYPE_TEXT:
-     *   			$weObj->text("hello, I'm wechat")->reply();
-     *   			exit;
-     *   			break;
-     *   		case Wechat::MSGTYPE_EVENT:
-     *   			....
-     *   			break;
-     *   		case Wechat::MSGTYPE_IMAGE:
-     *   			...
-     *   			break;
-     *   		default:
-     *   			$weObj->text("help info")->reply();
-     *   }
-     *
-     *   //获取菜单操作:
-     *   $menu = $weObj->getMenu();
-     *   //设置菜单
-     *   $newmenu =  array(
-     *   		"button"=>
-     *   			array(
-     *   				array('type'=>'click','name'=>'最新消息','key'=>'MENU_KEY_NEWS'),
-     *   				array('type'=>'view','name'=>'我要搜索','url'=>'http://www.baidu.com'),
-     *   				)
-     *  		);
-     *   $result = $weObj->createMenu($newmenu);
-     */
+    const SX                                = ' ';
+    const WL                                = ' ';
+    const HX                                = ' ';
+    const YY                                = ' ';
+    const QT                                = ' ';
+    const TEXT                              = ' ';
     //CLICK
     const V1001_TODAY_SX                    = 'V1001_TODAY_SX';
     const V1001_TODAY_WL                    = 'V1001_TODAY_WL';
@@ -174,6 +139,14 @@ class WechatController
     const CARD_BOARDINGPASS_CHECKIN         = '/card/boardingpass/checkin?';     //飞机票-在线选座(未加方法)
     const CARD_LUCKYMONEY_UPDATE            = '/card/luckymoney/updateuserbalance?';     //更新红包金额
     const SEMANTIC_API_URL                  = '/semantic/semproxy/search?'; //语义理解
+    //素材
+    const MEDIA_FOREVER_UPLOAD_URL = '/material/add_material?';
+    const MEDIA_FOREVER_NEWS_UPLOAD_URL = '/material/add_news?';
+    const MEDIA_FOREVER_NEWS_UPDATE_URL = '/material/update_news?';
+    const MEDIA_FOREVER_GET_URL = '/material/get_material?';
+    const MEDIA_FOREVER_DEL_URL = '/material/del_material?';
+    const MEDIA_FOREVER_COUNT_URL = '/material/get_materialcount?';
+    const MEDIA_FOREVER_BATCHGET_URL = '/material/batchget_material?';
     ///数据分析接口
     static $DATACUBE_URL_ARR = array(        //用户分析
         'user' => array(
@@ -202,7 +175,6 @@ class WechatController
             'summaryhour' => '/datacube/getinterfacesummaryhour?',	//获取接口分析分时数据（getinterfacesummaryhour）
         )
     );
-
 
     private $token;
     private $encodingAesKey;
@@ -1078,7 +1050,6 @@ class WechatController
         }
         curl_setopt($oCurl, CURLOPT_URL, $url);
         curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1 );
-        //获取到access_token参数
         $sContent = curl_exec($oCurl);
         $aStatus = curl_getinfo($oCurl);
         curl_close($oCurl);
@@ -1174,7 +1145,8 @@ class WechatController
             return $this->access_token;
         }
 
-        $authname = 'wechat_access_token'.$appid;
+        //$authname = 'wechat_access_token'.$appid;
+        $authname = $appid;
         if ($rs = $this->getCache($authname))  {
             $this->access_token = $rs;
             return $rs;
@@ -1404,15 +1376,31 @@ class WechatController
      * 	      0 => array (
      * 	        'name' => '扫码',
      * 	        'sub_button' => array (
-     *              0 => array ('type' => 'scancode_waitmsg','name' => '扫码带提示','key' => 'rselfmenu_0_0',),
-     * 	            1 => array ('type' => 'scancode_push','name' => '扫码推事件','key' => 'rselfmenu_0_1',),
+     * 	            0 => array (
+     * 	              'type' => 'scancode_waitmsg',
+     * 	              'name' => '扫码带提示',
+     * 	              'key' => 'rselfmenu_0_0',
+     * 	            ),
+     * 	            1 => array (
+     * 	              'type' => 'scancode_push',
+     * 	              'name' => '扫码推事件',
+     * 	              'key' => 'rselfmenu_0_1',
+     * 	            ),
      * 	        ),
      * 	      ),
      * 	      1 => array (
      * 	        'name' => '发图',
      * 	        'sub_button' => array (
-     *              0 => array ('type' => 'pic_sysphoto','name' => '系统拍照发图','key' => 'rselfmenu_1_0',),
-     * 	            1 => array ('type' => 'pic_photo_or_album','name' => '拍照或者相册发图','key' => 'rselfmenu_1_1',)
+     * 	            0 => array (
+     * 	              'type' => 'pic_sysphoto',
+     * 	              'name' => '系统拍照发图',
+     * 	              'key' => 'rselfmenu_1_0',
+     * 	            ),
+     * 	            1 => array (
+     * 	              'type' => 'pic_photo_or_album',
+     * 	              'name' => '拍照或者相册发图',
+     * 	              'key' => 'rselfmenu_1_1',
+     * 	            )
      * 	        ),
      * 	      ),
      * 	      2 => array (
@@ -1489,16 +1477,18 @@ class WechatController
     }
 
     /**
-     * 上传多媒体文件(认证后的订阅号可用)
+     * 上传临时素材，有效期为3天(认证后的订阅号可用)
      * 注意：上传大文件时可能需要先调用 set_time_limit(0) 避免超时
      * 注意：数组的键值任意，但文件名前必须加@，使用单引号以避免本地路径斜杠被转义
+     * 注意：临时素材的media_id是可复用的！
      * @param array $data {"media":'@Path\filename.jpg'}
      * @param type 类型：图片:image 语音:voice 视频:video 缩略图:thumb
      * @return boolean|array
      */
     public function uploadMedia($data, $type){
         if (!$this->access_token && !$this->checkAuth()) return false;
-        $result = $this->http_post(self::UPLOAD_MEDIA_URL.self::MEDIA_UPLOAD_URL.'access_token='.$this->access_token.'&type='.$type,$data,true);
+        //原先的上传多媒体文件接口使用 self::UPLOAD_MEDIA_URL 前缀
+        $result = $this->http_post(self::API_URL_PREFIX.self::MEDIA_UPLOAD_URL.'access_token='.$this->access_token.'&type='.$type,$data,true);
         if ($result)
         {
             $json = json_decode($result,true);
@@ -1513,13 +1503,186 @@ class WechatController
     }
 
     /**
-     * 根据媒体文件ID获取媒体文件(认证后的订阅号可用)
+     * 获取临时素材(认证后的订阅号可用)
      * @param string $media_id 媒体文件id
+     * @param boolean $is_video 是否为视频文件，默认为否
      * @return raw data
      */
-    public function getMedia($media_id){
+    public function getMedia($media_id,$is_video=false){
         if (!$this->access_token && !$this->checkAuth()) return false;
-        $result = $this->http_get(self::UPLOAD_MEDIA_URL.self::MEDIA_GET_URL.'access_token='.$this->access_token.'&media_id='.$media_id);
+        //原先的上传多媒体文件接口使用 self::UPLOAD_MEDIA_URL 前缀
+        //如果要获取的素材是视频文件时，不能使用https协议，必须更换成http协议
+        $url_prefix = $is_video?str_replace('https','http',self::API_URL_PREFIX):self::API_URL_PREFIX;
+        $result = $this->http_get($url_prefix.self::MEDIA_GET_URL.'access_token='.$this->access_token.'&media_id='.$media_id);
+        if ($result)
+        {
+            if (is_string($result)) {
+                $json = json_decode($result,true);
+                if (isset($json['errcode'])) {
+                    $this->errCode = $json['errcode'];
+                    $this->errMsg = $json['errmsg'];
+                    return false;
+                }
+            }
+            return $result;
+        }
+        return false;
+    }
+
+
+    /**
+     * 上传永久素材(认证后的订阅号可用)
+     * 新增的永久素材也可以在公众平台官网素材管理模块中看到
+     * 注意：上传大文件时可能需要先调用 set_time_limit(0) 避免超时
+     * 注意：数组的键值任意，但文件名前必须加@，使用单引号以避免本地路径斜杠被转义
+     * @param array $data {"media":'@Path\filename.jpg'}
+     * @param type 类型：图片:image 语音:voice 视频:video 缩略图:thumb
+     * @param boolean $is_video 是否为视频文件，默认为否
+     * @param array $video_info 视频信息数组，非视频素材不需要提供 array('title'=>'视频标题','introduction'=>'描述')
+     * @return boolean|array
+     */
+    public function uploadForeverMedia($data, $type,$is_video=false,$video_info=array()){
+        if (!$this->access_token && !$this->checkAuth()) return false;
+        //#TODO 暂不确定此接口是否需要让视频文件走http协议
+        //如果要获取的素材是视频文件时，不能使用https协议，必须更换成http协议
+        //$url_prefix = $is_video?str_replace('https','http',self::API_URL_PREFIX):self::API_URL_PREFIX;
+        //当上传视频文件时，附加视频文件信息
+        if ($is_video) $data['description'] = self::json_encode($video_info);
+        $result = $this->http_post(self::API_URL_PREFIX.self::MEDIA_FOREVER_UPLOAD_URL.'access_token='.$this->access_token.'&type='.$type,$data,true);
+        if ($result)
+        {
+            $json = json_decode($result,true);
+            if (!$json || !empty($json['errcode'])) {
+                $this->errCode = $json['errcode'];
+                $this->errMsg = $json['errmsg'];
+                return false;
+            }
+            return $json;
+        }
+        return false;
+    }
+
+    /**
+     * 上传永久图文素材(认证后的订阅号可用)
+     * 新增的永久素材也可以在公众平台官网素材管理模块中看到
+     * @param array $data 消息结构{"articles":[{...}]}
+     * @return boolean|array
+     */
+    public function uploadForeverArticles($data){
+        if (!$this->access_token && !$this->checkAuth()) return false;
+        $result = $this->http_post(self::API_URL_PREFIX.self::MEDIA_FOREVER_NEWS_UPLOAD_URL.'access_token='.$this->access_token,self::json_encode($data));
+        if ($result)
+        {
+            $json = json_decode($result,true);
+            if (!$json || !empty($json['errcode'])) {
+                $this->errCode = $json['errcode'];
+                $this->errMsg = $json['errmsg'];
+                return false;
+            }
+            return $json;
+        }
+        return false;
+    }
+
+    /**
+     * 修改永久图文素材(认证后的订阅号可用)
+     * 永久素材也可以在公众平台官网素材管理模块中看到
+     * @param string $media_id 图文素材id
+     * @param array $data 消息结构{"articles":[{...}]}
+     * @param int $index 更新的文章在图文素材的位置，第一篇为0，仅多图文使用
+     * @return boolean|array
+     */
+    public function updateForeverArticles($media_id,$data,$index=0){
+        if (!$this->access_token && !$this->checkAuth()) return false;
+        if (!isset($data['media_id'])) $data['media_id'] = $media_id;
+        if (!isset($data['index'])) $data['index'] = $index;
+        $result = $this->http_post(self::API_URL_PREFIX.self::MEDIA_FOREVER_NEWS_UPDATE_URL.'access_token='.$this->access_token,self::json_encode($data));
+        if ($result)
+        {
+            $json = json_decode($result,true);
+            if (!$json || !empty($json['errcode'])) {
+                $this->errCode = $json['errcode'];
+                $this->errMsg = $json['errmsg'];
+                return false;
+            }
+            return $json;
+        }
+        return false;
+    }
+
+    /**
+     * 获取永久素材(认证后的订阅号可用)
+     * 返回图文消息数组或二进制数据，失败返回false
+     * @param string $media_id 媒体文件id
+     * @param boolean $is_video 是否为视频文件，默认为否
+     * @return boolean|array|raw data
+     */
+    public function getForeverMedia($media_id,$is_video=false){
+        if (!$this->access_token && !$this->checkAuth()) return false;
+        $data = array('media_id' => $media_id);
+        //#TODO 暂不确定此接口是否需要让视频文件走http协议
+        //如果要获取的素材是视频文件时，不能使用https协议，必须更换成http协议
+        //$url_prefix = $is_video?str_replace('https','http',self::API_URL_PREFIX):self::API_URL_PREFIX;
+        $result = $this->http_post(self::API_URL_PREFIX.self::MEDIA_FOREVER_GET_URL.'access_token='.$this->access_token,self::json_encode($data));
+        if ($result)
+        {
+            if (is_string($result)) {
+                $json = json_decode($result,true);
+                if (isset($json['errcode'])) {
+                    $this->errCode = $json['errcode'];
+                    $this->errMsg = $json['errmsg'];
+                    return false;
+                }
+                return $json;
+            }
+            return $result;
+        }
+        return false;
+    }
+
+    /**
+     * 删除永久素材(认证后的订阅号可用)
+     * @param string $media_id 媒体文件id
+     * @return boolean
+     */
+    public function delForeverMedia($media_id){
+        if (!$this->access_token && !$this->checkAuth()) return false;
+        $data = array('media_id' => $media_id);
+        $result = $this->http_post(self::API_URL_PREFIX.self::MEDIA_FOREVER_DEL_URL.'access_token='.$this->access_token,self::json_encode($data));
+        if ($result)
+        {
+            $json = json_decode($result,true);
+            if (!$json || !empty($json['errcode'])) {
+                $this->errCode = $json['errcode'];
+                $this->errMsg = $json['errmsg'];
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 获取永久素材列表(认证后的订阅号可用)
+     * @param string $type 素材的类型,图片（image）、视频（video）、语音 （voice）、图文（news）
+     * @param int $offset 全部素材的偏移位置，0表示从第一个素材
+     * @param int $count 返回素材的数量，取值在1到20之间
+     * @return boolean|array
+     * 返回数组格式:
+     * array(
+     *  'total_count'=>0, //该类型的素材的总数
+     *  'item_count'=>0,  //本次调用获取的素材的数量
+     *  'item'=>array()   //素材列表数组，内容定义请参考官方文档
+     * )
+     */
+    public function getForeverList($type,$offset,$count){
+        if (!$this->access_token && !$this->checkAuth()) return false;
+        $data = array(
+            'type' => $type,
+            'offset' => $offset,
+            'count' => $count,
+        );
+        $result = $this->http_post(self::API_URL_PREFIX.self::MEDIA_FOREVER_BATCHGET_URL.'access_token='.$this->access_token,self::json_encode($data));
         if ($result)
         {
             $json = json_decode($result,true);
@@ -1528,13 +1691,40 @@ class WechatController
                 $this->errMsg = $json['errmsg'];
                 return false;
             }
-            return $result;
+            return $json;
         }
         return false;
     }
 
     /**
-     * 上传图文消息素材(认证后的订阅号可用)
+     * 获取永久素材总数(认证后的订阅号可用)
+     * @return boolean|array
+     * 返回数组格式:
+     * array(
+     *  'voice_count'=>0, //语音总数量
+     *  'video_count'=>0, //视频总数量
+     *  'image_count'=>0, //图片总数量
+     *  'news_count'=>0   //图文总数量
+     * )
+     */
+    public function getForeverCount(){
+        if (!$this->access_token && !$this->checkAuth()) return false;
+        $result = $this->http_get(self::API_URL_PREFIX.self::MEDIA_FOREVER_COUNT_URL.'access_token='.$this->access_token);
+        if ($result)
+        {
+            $json = json_decode($result,true);
+            if (isset($json['errcode'])) {
+                $this->errCode = $json['errcode'];
+                $this->errMsg = $json['errmsg'];
+                return false;
+            }
+            return $json;
+        }
+        return false;
+    }
+
+    /**
+     * 上传图文消息素材，用于群发(认证后的订阅号可用)
      * @param array $data 消息结构{"articles":[{...}]}
      * @return boolean|array
      */
@@ -1845,7 +2035,7 @@ class WechatController
 
     /**
      * 获取关注者详细信息
-     * @param string $openid 用户的id，getRevFrom()
+     * @param string $openid
      * @return array {subscribe,openid,nickname,sex,city,province,country,language,headimgurl,subscribe_time,[unionid]}
      * 注意：unionid字段 只有在用户将公众号绑定到微信开放平台账号后，才会出现。建议调用前用isset()检测一下
      */
@@ -3371,5 +3561,3 @@ class ErrorCode
         };
     }
 }
-
-
